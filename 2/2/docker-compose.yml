@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  harjoitus22:
+    image: devopsdockeruh/simple-web-service:alpine
+    build: .
+    ports:
+      - 127.0.0.1:8080:8080
+    volumes:
+      - ./text.log:/usr/src/app/text.log
+    container_name: harj22
+    command: [ "server"]

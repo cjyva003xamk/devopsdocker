@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  28frontservice:
+    image: frontjyva
+    build: .
+    ports:
+      - 5000:5000
+    container_name: 28front
+    command: ["serve", "-s", "-l", "5000", "build"]
+
+  28backservice:
+    image: backejyva
+    build: .
+    ports:
+      - 8080:8080
+    container_name: 28back
+    environment:
+#      - REQUEST_ORIGIN=http://localhost:5000
+      - REDIS_HOST=28redis
+      - POSTGRES_HOST=28postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=postgres
+
+  redisServer:
+    image: redis
+    container_name: 28redis
+
+  postgresServer:
+    image: postgres
+    container_name: 28postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./28:/var/lib/postgresql/data
+
+  reverse_proxy:
+    image: nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    environment:
+      - NGINX_PORT=80
+    depends_on:
+      - 28frontservice
+      - 28backservice

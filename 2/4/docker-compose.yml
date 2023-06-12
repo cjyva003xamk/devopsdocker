@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  harjoitus23front:
+    image: frontjyva
+    build: .
+    ports:
+      - 127.0.0.1:5000:5000
+    container_name: 24front
+    command: ["serve", "-s", "-l", "5000", "build"]
+  harjoitus23back:
+    image: backejyva
+    build: .
+    ports:
+      - 127.0.0.1:8080:8080
+    container_name: 24back
+#    command: [ "server"]
+    environment:
+      - REQUEST_ORIGIN=http://localhost:5000
+      - REDIS_HOST=24redis
+  redisServer:
+    image: redis
+    container_name: 24redis
